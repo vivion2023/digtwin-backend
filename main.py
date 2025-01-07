@@ -1,6 +1,6 @@
 import asyncio
 from server.robot_control.test_methods import test_process_demo
-from server.websocker_server import start_server
+from server.connect.websocker_server_connect import start_server
 from server.robot_control.test_methods import test_process_demo
 
 async def main():
