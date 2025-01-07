@@ -26,7 +26,7 @@ share/python-wheels/
 MANIFEST
 
 # Project specific
-main.py
+
 config.ini
 
 # PyInstaller
