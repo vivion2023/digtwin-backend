@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 
+"""
+websocket服务器
+"""
+
 import asyncio
 import json
 from typing import Dict
 import websockets
-from message_handler import MessageHandler
+from .message_handler import MessageHandler
 
 # 存储所有websocket连接的字典
 connected_clients: Dict[str, websockets.WebSocketServerProtocol] = {}
@@ -71,6 +75,3 @@ async def start_server():
     print("Starting backend server. Waiting for websocket messages... (Press Ctrl + C to quit)")
     async with websockets.serve(handler, "", 5001):
         await asyncio.Future()  # run forever
-
-if __name__ == "__main__":
-    asyncio.run(start_server())

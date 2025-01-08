@@ -1,5 +1,9 @@
+"""
+消息处理器
+"""
+
 import json
-from message_processors import MessageProcessors
+from .message_processors import MessageProcessors
 
 class MessageHandler:
     def __init__(self, connected_clients):

@@ -1,3 +1,7 @@
+"""
+消息处理方法
+"""
+
 class MessageProcessors:
     async def get_target(self, message_data: dict) -> str:
         """从消息中提取target字段"""
