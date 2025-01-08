@@ -2,63 +2,75 @@
 
 import asyncio
 import json
-import uuid
 from typing import Dict
-
 import websockets
+from message_handler import MessageHandler
 
 # 存储所有websocket连接的字典
-# key: session_id, value: websocket connection
 connected_clients: Dict[str, websockets.WebSocketServerProtocol] = {}
 
+async def register_client(websocket, username: str) -> str:
+    """注册新的websocket连接"""
+    # 检查用户是否已经连接
+    if username in connected_clients:
+        print(f"Connection already exists for user: {username}")
+        return None
 
-async def register_client(websocket) -> str:
-    """注册新的websocket返回session_id客户端"""
-    session_id = str(uuid.uuid4())
-    connected_clients[session_id] = websocket
-    print(f"New client connected. Session ID: {session_id}. Total clients: {len(connected_clients)}")
-    return session_id
+    # 注册新连接
+    connected_clients[username] = websocket
+    print(f"New client connected. User: {username}")
+    return username
 
-
-async def unregister_client(session_id):
+async def unregister_client(username):
     """注销websocket客户端"""
-    if session_id in connected_clients:
-        del connected_clients[session_id]
-        print(f"Client {session_id} disconnected. Total clients: {len(connected_clients)}")
-
-
-async def send_message(websocket, message):
-    """发送消息给websocket客户端"""
-    await websocket.send(json.dumps(message))
-
+    if username in connected_clients:
+        del connected_clients[username]
+        print(f"Client disconnected. User: {username}")
 
 async def handler(websocket):
     """处理websocket连接"""
-    session_id = await register_client(websocket)
+    username = None
+    message_handler = MessageHandler(connected_clients)
 
     try:
-        # 发送session_id给客户端
-        await send_message(websocket, {
-            "type": "session_id",
-            "session_id": session_id
-        })
+        # 等待首次消息获取用户名
+        first_message = await websocket.recv()
+        try:
+            data = json.loads(first_message)
+            username = data.get('username')
+            if not username:
+                print("First message missing username field")
+                return
+            
+            username = await register_client(websocket, username)
+            if not username:
+                return
+                
+        except json.JSONDecodeError:
+            print("Invalid JSON in first message")
+            return
         
+        # 继续处理后续消息
         while True:
             try:
-                await websocket.recv()
+                message = await websocket.recv()
+                await message_handler.handle_message(message, username)
             except websockets.exceptions.ConnectionClosedOK:
-                print("Closed connection.")
+                print(f"Closed connection normally for {username}")
                 break
             except websockets.exceptions.ConnectionClosedError:
-                print("Closed connection.")
+                print(f"Closed connection with error for {username}")
                 break
 
     finally:
-        await unregister_client(session_id)
-
+        if username:
+            await unregister_client(username)
 
 async def start_server():
     """启动websocket服务器"""
     print("Starting backend server. Waiting for websocket messages... (Press Ctrl + C to quit)")
     async with websockets.serve(handler, "", 5001):
         await asyncio.Future()  # run forever
+
+if __name__ == "__main__":
+    asyncio.run(start_server())
