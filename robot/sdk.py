@@ -7,7 +7,7 @@ from logging.handlers import RotatingFileHandler
 from multiprocessing import Process, Queue
 import os
 from math import pi
-
+from config.robot import LOG_PATH
 # 创建一个logger
 #logger = logging.getLogger()
 
@@ -19,11 +19,11 @@ def logger_init():
     logger.setLevel(logging.INFO)
 
     # 创建log目录
-    if not os.path.exists('./logfiles'):
-        os.mkdir('./logfiles')
+    if not os.path.exists(LOG_PATH):
+        os.mkdir(LOG_PATH)
 
     # 创建一个handler，用于写入日志文件
-    logfile = './logfiles/robot-ctl-python.log'
+    logfile = f'{LOG_PATH}/robot-ctl-python.log'
 
     # 以append模式打开日志文件
     # fh = logging.FileHandler(logfile, mode='a')
