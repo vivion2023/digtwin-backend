@@ -3,7 +3,8 @@
 """
 
 import json
-from .message_processors import MessageProcessors
+from .convert.processors import MessageProcessors
+from ..robot.test.test_methods import test_process_demo
 
 class MessageHandler:
     def __init__(self, connected_clients):
@@ -23,9 +24,15 @@ class MessageHandler:
             sender_username: 发送消息的用户名
         """
         try:
-            # 如果是首次连接消息（包含username字段），则跳过处理
+            # 处理首次连接消息
             data = json.loads(message)
             if 'username' in data and len(data) == 1:
+                response = {
+                    "type": "system",
+                    "content": "注册成功",
+                    "target": sender_username
+                }
+                await self.connected_clients[sender_username].send(json.dumps(response))
                 return
                 
             # 获取目标用户名
@@ -37,6 +44,14 @@ class MessageHandler:
             if target in self.connected_clients:
                 await self.connected_clients[target].send(json.dumps(data))
             else:
+                # 如果目标用户不存在，则测试机器人控制
+                # 建立连接
+                # if 连接成功
+                # 测试机器人控制
+                # else
+                # 发送错误信息
+                test_process_demo
+
                 print(f"Target {target} not found in connected clients")
                 
         except json.JSONDecodeError:

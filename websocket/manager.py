@@ -8,7 +8,7 @@ import asyncio
 import json
 from typing import Dict
 import websockets
-from .message_handler import MessageHandler
+from ..command.handler import MessageHandler
 
 # 存储所有websocket连接的字典
 connected_clients: Dict[str, websockets.WebSocketServerProtocol] = {}

@@ -1,4 +1,4 @@
-from .robotcontrol import Auboi5Robot, logger_init, logger, RobotErrorType, RobotError, RobotCoordType, RobotMoveTrackType, RobotToolPowerType, RobotToolDigitalIoDir, RobotToolIoAddr, RobotToolIoName, RobotIOType, RobotUserIoName
+from ..sdk import Auboi5Robot, logger_init, logger, RobotErrorType, RobotError, RobotCoordType, RobotMoveTrackType, RobotToolPowerType, RobotToolDigitalIoDir, RobotToolIoAddr, RobotToolIoName, RobotIOType, RobotUserIoName
 import time
 from multiprocessing import Process, Queue
 from math import pi
