@@ -2,6 +2,11 @@ from config.robot import JOINT_MAX_VELOCITY, JOINT_MAX_ACC, COLLISION_LEVEL, ARR
 import time
 from math import pi
 
+async def judge_command(message):
+    """处理机器人命令"""
+    if message["command"] == "init_bones":
+        init_bones()
+
 def init_params(robot):
     """应用机器人初始化参数"""
     # 初始化运动属性
@@ -16,6 +21,9 @@ def init_params(robot):
     
     # 设置到位前瞻量
     robot.set_arrival_ahead_blend(ARRIVAL_AHEAD_BLEND)
+
+def init_bones(robot):
+    """初始化机器人骨骼"""
 
 def demo_path(robot):
     """执行演示运动路径"""

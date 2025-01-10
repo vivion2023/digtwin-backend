@@ -5,6 +5,9 @@
 import json
 from .convert.processors import MessageProcessors
 from ..robot.test.test_methods import test_process_demo
+from config.setting import OBJECT
+from robot.control.manager import judge_command as robot_command
+from convert.processors import judge_command as blender_command
 
 class MessageHandler:
     def __init__(self, connected_clients):
@@ -24,8 +27,9 @@ class MessageHandler:
             sender_username: 发送消息的用户名
         """
         try:
-            # 处理首次连接消息
             data = json.loads(message)
+
+            # 处理首次连接消息
             if 'username' in data and len(data) == 1:
                 response = {
                     "type": "system",
@@ -35,24 +39,17 @@ class MessageHandler:
                 await self.connected_clients[sender_username].send(json.dumps(response))
                 return
                 
-            # 获取目标用户名
-            target = await self.processors.get_target(data)
-            # 处理消息，移除target字段
-            message = await self.processors.process_message(data)
+            # 根据OBJECT类型处理消息
+            if OBJECT in ["robot", "both"]:
+                # 机器人控制逻辑
+                await robot_command(data)
             
-            # 发送消息给目标连接
-            if target in self.connected_clients:
-                await self.connected_clients[target].send(json.dumps(data))
-            else:
-                # 如果目标用户不存在，则测试机器人控制
-                # 建立连接
-                # if 连接成功
-                # 测试机器人控制
-                # else
-                # 发送错误信息
-                test_process_demo
-
-                print(f"Target {target} not found in connected clients")
+            if OBJECT in ["model", "both"]:
+                # 转成blender命令
+                if "blender" in self.connected_clients:
+                    await blender_command(data)
+                else:
+                    print("Blender client not connected")
                 
         except json.JSONDecodeError:
             print("Invalid JSON message")
