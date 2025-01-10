@@ -6,24 +6,28 @@ async def judge_command(message):
     """处理机器人命令"""
     if message["command"] == "init_bones":
         init_bones()
-
-def init_params(robot):
-    """应用机器人初始化参数"""
-    # 初始化运动属性
-    robot.init_profile()
-    
-    # 设置关节最大速度和加速度
-    robot.set_joint_maxvelc(JOINT_MAX_VELOCITY)
-    robot.set_joint_maxacc(JOINT_MAX_ACC)
-    
-    # 设置碰撞等级
-    robot.set_collision_class(COLLISION_LEVEL)
-    
-    # 设置到位前瞻量
-    robot.set_arrival_ahead_blend(ARRIVAL_AHEAD_BLEND)
+    elif message["command"] == "start_posture":
+        start_posture()
+    elif message["command"] == "rotate_bones":
+        angle = message["angle"]
+        rotate_bones(angle)
+    elif message["command"] == "end_program":
+        end_program()
+        
 
 def init_bones(robot):
     """初始化机器人骨骼"""
+    joint_radian = (0, 0, 0, 0, 0, 0)
+    robot.move_joint(joint_radian, True)
+
+def start_posture(robot):
+    """开始姿态"""
+
+def rotate_bones(robot, angle):
+    """旋转机器人骨骼"""
+
+def end_program(robot):
+    """结束程序"""
 
 def demo_path(robot):
     """执行演示运动路径"""

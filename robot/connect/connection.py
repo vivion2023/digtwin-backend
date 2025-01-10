@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 from robot.sdk import Auboi5Robot, logger_init, logger, RobotErrorType
 from config.robot import IP, PORT, LOG_PATH
 import time
-from robot.control.control_method import init_params, demo_path
+from robot.control.manager import demo_path
 
 class RobotConnection:
     def __init__(self, ip=IP, port=PORT):
@@ -19,6 +19,21 @@ class RobotConnection:
         self.port = port
         self.robot = None
         self._running = False
+
+    def init_params(self):
+        """应用机器人初始化参数"""
+        # 初始化运动属性
+        self.robot.init_profile()
+        
+        # 设置关节最大速度和加速度
+        self.robot.set_joint_maxvelc(JOINT_MAX_VELOCITY)
+        self.robot.set_joint_maxacc(JOINT_MAX_ACC)
+        
+        # 设置碰撞等级
+        self.robot.set_collision_class(COLLISION_LEVEL)
+        
+        # 设置到位前瞻量
+        self.robot.set_arrival_ahead_blend(ARRIVAL_AHEAD_BLEND)
         
     async def connect(self):
         # 初始化日志系统

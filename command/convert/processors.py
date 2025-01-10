@@ -5,7 +5,11 @@
 async def judge_command(message):
     """处理blender命令"""
     if message["command"] == "init_bones":
-        print("init_bones")
+        init_bones()
+    elif message["command"] == "rotate_bones":
+        rotate_bones()
+    elif message["command"] == "end_program":
+        end_program()
         
 async def init_bones(message):
     """初始化机器人骨骼"""
